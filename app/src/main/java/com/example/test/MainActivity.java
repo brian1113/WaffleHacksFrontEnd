@@ -3,11 +3,17 @@ package com.example.test;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.material.slider.Slider;
@@ -33,10 +39,21 @@ public class MainActivity extends AppCompatActivity {
     TextView display;
     String[] currentDisplay = new String[6];
 
+    int portNumber = 3030;
+    EditText portInput;
+    Button serverButton;
+    boolean serverStarted = false;
+    TextView serverDisplay;
+
+    TextView colorDisplay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        colorDisplay = (TextView) findViewById(R.id.colorDisplay);
+        colorDisplay.setBackgroundColor(0xffff0000);
 
         display = (TextView) findViewById(R.id.display);
         display.setBackgroundColor(Color.parseColor("lightgrey"));
@@ -68,14 +85,14 @@ public class MainActivity extends AppCompatActivity {
         debugButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                if(debugMode == true) debugMode = false;
-                else debugMode = true;
+                debugMode = !debugMode;
                 debugPressed();
             }
         });
 
         Button startButton = (Button) findViewById(R.id.start);
         startButton.setOnClickListener(new View.OnClickListener(){
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v){
                 if(recordingMovement == 0){
@@ -97,14 +114,24 @@ public class MainActivity extends AppCompatActivity {
             currentDisplay[2] = "Stroke Size: " + strokeSize + "\n";
             updateDisplay(display);
         });
+
+
+        portInput = (EditText) findViewById(R.id.portInput);
+        serverButton = (Button) findViewById(R.id.serverButton);
+        serverButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                serverButtonClicked(v);
+            }
+        });
+
+        serverDisplay = (TextView) findViewById(R.id.serverDisplay);
     }
 
     public void openColorPicker(){
         AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(this, mDefaultColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
-            public void onCancel(AmbilWarnaDialog dialog) {
-
-            }
+            public void onCancel(AmbilWarnaDialog dialog) {}
 
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
@@ -115,6 +142,8 @@ public class MainActivity extends AppCompatActivity {
                 Blue = Color.blue(mDefaultColor);
                 currentDisplay[1] = "Color: (" + Red + ", " + Green + ", " + Blue + ")\n";
                 updateDisplay(display);
+
+                colorDisplay.setBackgroundColor(mDefaultColor);
             }
         });
         colorPicker.show();
@@ -126,13 +155,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void debugPressed(){
-        if(debugMode == true){
-            debugMode = false;
-        }else debugMode = true;
+        debugMode = !debugMode;
     }
 
+    @SuppressLint("SetTextI18n")
     private void updateDisplay(TextView display){
         display.setText(currentDisplay[0] + currentDisplay[1] + currentDisplay[2] + currentDisplay[3]
         + currentDisplay[4] + currentDisplay[5]);
     }
+
+    //TODO yotam make the server start/stop here
+    //TODO add the server status to the display
+    public void serverButtonClicked(View v){
+        if(!serverStarted){
+
+            InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(),0);
+
+            String input = portInput.getText().toString();
+            if(input.length() == 0){
+                input = "3030";
+                portNumber = 3030;
+            }else{
+                portNumber = Integer.parseInt(input);
+            }
+
+            input = "http://localhost:" + input + "/";
+
+            serverDisplay.setText("Address: "+input);
+            serverButton.setText("Disconnect");
+            portInput.setFocusable(false);
+        }else{
+            serverDisplay.setText("Connect to a server!");
+            serverButton.setText("Connect");
+            portInput.setFocusableInTouchMode(true);
+        }
+        serverStarted = !serverStarted;
+    }
 }
+//TODO add acceleration to the debug mode
