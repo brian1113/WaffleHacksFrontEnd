@@ -5,4 +5,5 @@
     <string name="info_text">Info</string>
     <string name="color_picker">Color Picker</string>
     <string name="slider_caption">Stroke Size</string>
+    <string name="info_title">Button Info</string>
 </resources>
