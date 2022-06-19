@@ -47,10 +47,58 @@ public class MainActivity extends AppCompatActivity {
 
     TextView colorDisplay;
 
+    TextView infoTitle;
+    TextView description;
+    Button backButton;
+
+
+    Button startButton;
+    Slider slider;
+    TextView caption;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+
+
+
+        infoTitle = (TextView) findViewById(R.id.info_title);
+        description = (TextView) findViewById(R.id.description);
+        backButton = (Button) findViewById(R.id.returnButton);
+
+
+        infoTitle.setVisibility(View.GONE);
+        description.setVisibility(View.GONE);
+        backButton.setVisibility(View.GONE);
+
+        caption = (TextView) findViewById(R.id.sliderCaption);
+
+        backButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                button.setVisibility(View.VISIBLE);
+                mButton.setVisibility(View.VISIBLE);
+                debugButton.setVisibility(View.VISIBLE);
+                display.setVisibility(View.VISIBLE);
+                portInput.setVisibility(View.VISIBLE);
+                serverButton.setVisibility(View.VISIBLE);
+                serverDisplay.setVisibility(View.VISIBLE);
+                colorDisplay.setVisibility(View.VISIBLE);
+                startButton.setVisibility(View.VISIBLE);
+                slider.setVisibility(View.VISIBLE);
+                caption.setVisibility(View.VISIBLE);
+                infoTitle.setVisibility(View.GONE);
+                description.setVisibility(View.GONE);
+                backButton.setVisibility(View.GONE);
+            }
+        });
+
+
+
 
         colorDisplay = (TextView) findViewById(R.id.colorDisplay);
         colorDisplay.setBackgroundColor(0xffff0000);
@@ -90,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button startButton = (Button) findViewById(R.id.start);
+        startButton = (Button) findViewById(R.id.start);
         startButton.setOnClickListener(new View.OnClickListener(){
             @SuppressLint("SetTextI18n")
             @Override
@@ -108,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Slider slider = findViewById(R.id.slider);
+        slider = findViewById(R.id.slider);
         slider.addOnChangeListener((slider1, value, fromUser) -> {
             strokeSize = (int) value;
             currentDisplay[2] = "Stroke Size: " + strokeSize + "\n";
@@ -150,8 +198,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void infoButtonPressed(){
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        startActivity(intent);
+            button.setVisibility(View.GONE);
+            mButton.setVisibility(View.GONE);
+            debugButton.setVisibility(View.GONE);
+            display.setVisibility(View.GONE);
+            portInput.setVisibility(View.GONE);
+            serverButton.setVisibility(View.GONE);
+            serverDisplay.setVisibility(View.GONE);
+            colorDisplay.setVisibility(View.GONE);
+            startButton.setVisibility(View.GONE);
+            slider.setVisibility(View.GONE);
+            caption.setVisibility(View.GONE);
+            infoTitle.setVisibility(View.VISIBLE);
+            description.setVisibility(View.VISIBLE);
+            backButton.setVisibility(View.VISIBLE);
+
     }
 
     public void debugPressed(){
@@ -164,8 +225,7 @@ public class MainActivity extends AppCompatActivity {
         + currentDisplay[4] + currentDisplay[5]);
     }
 
-    //TODO yotam make the server start/stop here
-    //TODO add the server status to the display
+
     public void serverButtonClicked(View v){
         if(!serverStarted){
 
@@ -192,5 +252,6 @@ public class MainActivity extends AppCompatActivity {
         }
         serverStarted = !serverStarted;
     }
+
+
 }
-//TODO add acceleration to the debug mode
